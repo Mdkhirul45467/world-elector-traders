@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Elector Traders</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navigation Bar -->
+  <nav class="bg-white shadow p-4 flex justify-between flex-wrap">
+    <h1 class="text-xl font-bold">World Elector Traders</h1>
+    <div class="space-x-4 mt-2 md:mt-0">
+      <a href="#home" class="hover:underline">Home</a>
+      <a href="#products" class="hover:underline">Products</a>
+      <a href="#about" class="hover:underline">About</a>
+      <a href="#contact" class="hover:underline">Contact</a>
+      <a href="#cart" class="hover:underline">Cart</a>
+      <a href="#checkout" class="hover:underline">Checkout</a>
+    </div>
+  </nav>
+
+  <!-- Home Section -->
+  <section id="home" class="p-8 text-center">
+    <h2 class="text-3xl font-bold mb-4">Welcome to World Elector Traders</h2>
+    <p>Your one-stop shop for basic electronic essentials!</p>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="p-8">
+    <h2 class="text-2xl font-bold mb-6 text-center">Our Products</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="product-list"></div>
+  </section>
+
+  <!-- Cart Section -->
+  <section id="cart" class="p-8 bg-white">
+    <h2 class="text-2xl font-bold mb-4">Your Cart</h2>
+    <div id="cart-items" class="space-y-4"></div>
+    <div class="mt-6">
+      <h3 class="text-xl font-semibold">Total: $<span id="total">0</span></h3>
+      <button onclick="clearCart()" class="bg-red-500 text-white px-4 py-2 mt-2 rounded">Clear Cart</button>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="p-8 bg-gray-50">
+    <h2 class="text-2xl font-bold mb-4">About Us</h2>
+    <p>World Elector Traders is committed to providing the best electronic items at affordable prices. Our mission is to make electronics accessible to everyone.</p>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="p-8">
+    <h2 class="text-2xl font-bold mb-4">Contact Us</h2>
+    <form class="space-y-4 max-w-md">
+      <input type="text" placeholder="Your Name" class="w-full p-2 border rounded" required />
+      <input type="email" placeholder="Your Email" class="w-full p-2 border rounded" required />
+      <textarea placeholder="Your Message" class="w-full p-2 border rounded" rows="4" required></textarea>
+      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Send Message</button>
+    </form>
+  </section>
+
+  <!-- Checkout Section -->
+  <section id="checkout" class="p-8 bg-white">
+    <h2 class="text-2xl font-bold mb-4">Checkout</h2>
+    <form class="space-y-4 max-w-md" onsubmit="handleCheckout(event)">
+      <input type="text" placeholder="Full Name" class="w-full p-2 border rounded" required />
+      <input type="text" placeholder="Shipping Address" class="w-full p-2 border rounded" required />
+      <input type="email" placeholder="Email for Order Confirmation" class="w-full p-2 border rounded" required />
+      <select class="w-full p-2 border rounded" id="payment-method" required>
+        <option disabled selected>Select Payment Method</option>
+        <option value="cash">Cash on Delivery</option>
+        <option value="paypal">PayPal</option>
+        <option value="stripe">Stripe (Credit Card)</option>
+      </select>
+      <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded">Place Order</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-200 text-center p-4 mt-8">
+    © 2025 World Elector Traders. All rights reserved.
+  </footer>
+
+  <!-- JavaScript Section -->
+  <script>
+    const products = [
+      { name: "Electronic Smoke", price: 25, image: "https://via.placeholder.com/150?text=Smoke" },
+      { name: "Electric Heater", price: 45, image: "https://via.placeholder.com/150?text=Heater" },
+      { name: "LCD", price: 120, image: "https://via.placeholder.com/150?text=LCD" },
+      { name: "Phone Charger", price: 10, image: "https://via.placeholder.com/150?text=Charger" },
+      { name: "Earbuds", price: 15, image: "https://via.placeholder.com/150?text=Earbuds" },
+      { name: "Headphones", price: 30, image: "https://via.placeholder.com/150?text=Headphones" },
+      { name: "Hair Dryer", price: 25, image: "https://via.placeholder.com/150?text=Hair+Dryer" },
+      { name: "Sound Speaker", price: 35, image: "https://via.placeholder.com/150?text=Speaker" },
+      { name: "Alarm Clock", price: 20, image: "https://via.placeholder.com/150?text=Alarm+Clock" },
+      { name: "Bluetooth Speaker", price: 40, image: "https://via.placeholder.com/150?text=BT+Speaker" },
+      { name: "Drill", price: 60, image: "https://via.placeholder.com/150?text=Drill" },
+      { name: "Iron", price: 25, image: "https://via.placeholder.com/150?text=Iron" },
+      { name: "Juicer", price: 50, image: "https://via.placeholder.com/150?text=Juicer" },
+      { name: "Kettle", price: 20, image: "https://via.placeholder.com/150?text=Kettle" },
+      { name: "Fan", price: 55, image: "https://via.placeholder.com/150?text=Fan" }
+    ];
+
+    const cart = [];
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      alert(`${name} added to cart!`);
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById("cart-items");
+      const totalSpan = document.getElementById("total");
+      cartItems.innerHTML = "";
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        const div = document.createElement("div");
+        div.className = "p-4 border rounded flex justify-between";
+        div.innerHTML = `<span>${item.name} - $${item.price}</span>
+                         <button onclick="removeFromCart(${index})" class="text-red-500">Remove</button>`;
+        cartItems.appendChild(div);
+      });
+      totalSpan.textContent = total.toFixed(2);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function clearCart() {
+      cart.length = 0;
+      updateCart();
+    }
+
+    const productList = document.getElementById("product-list");
+    products.forEach(p => {
+      const div = document.createElement("div");
+      div.className = 'bg-white p-4 rounded shadow text-center';
+      div.innerHTML = `
+        <img src='${p.image}' alt='${p.name}' class='mb-2 mx-auto w-full h-36 object-contain'>
+        <h3 class='font-bold text-lg mb-1'>${p.name}</h3>
+        <p class='text-gray-600 mb-2'>$${p.price}</p>
+        <p class='text-sm mb-4'>High quality ${p.name.toLowerCase()} for everyday use.</p>
+        <button onclick="addToCart('${p.name}', ${p.price})" class='bg-blue-500 text-white px-4 py-2 rounded'>Buy Now</button>
+      `;
+      productList.appendChild(div);
+    });
+
+    function handleCheckout(event) {
+      event.preventDefault();
+      const method = document.getElementById("payment-method").value;
+      if (method === "paypal") {
+        window.open("https://www.paypal.com", "_blank");
+      } else if (method === "stripe") {
+        window.open("https://www.stripe.com", "_blank");
+      } else {
+        alert("Order placed with Cash on Delivery!");
+      }
+    }
+  </script>
+</body>
+</html>
